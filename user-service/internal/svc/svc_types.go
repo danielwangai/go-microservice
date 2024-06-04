@@ -47,3 +47,9 @@ type UserAPIResponseType struct {
 	CreatedAt string `json:"createdAt"`
 	UpdatedAt string `json:"updatedAt"`
 }
+
+// UserLoginAPIRequestType json request for user login
+type UserLoginAPIRequestType struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}

@@ -11,5 +11,8 @@ const (
 
 	// user endpoints
 	UsersBaseEndpoint        = "/users"
+	UserRegisterEndpoint     = "/users/register"
+	UsersLoginEndpoint       = "/users/login"
 	RegisterUserEndpointName = "register-user-endpoint-name"
+	LoginEndpointName        = "login-endpoint-name"
 )

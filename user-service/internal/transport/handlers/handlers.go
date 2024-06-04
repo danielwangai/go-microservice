@@ -13,6 +13,7 @@ import (
 type Endpoints interface {
 	Healthcheck(ctx context.Context, log *logrus.Logger, dbClient *mongo.Client) http.HandlerFunc
 	RegisterUser(ctx context.Context, service svc.Svc, log *logrus.Logger) http.HandlerFunc
+	Login(ctx context.Context, service svc.Svc, log *logrus.Logger) http.HandlerFunc
 }
 
 type Epts struct{}
