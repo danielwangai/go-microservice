@@ -53,3 +53,15 @@ type UserLoginAPIRequestType struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
+
+type UserFollowAPIRequestType struct {
+	Follower string `json:"follower"`
+	Followed string `json:"followed"`
+}
+
+type UserFollowerServiceResponseType struct {
+	ID        string                   `json:"id"`
+	Follower  *UserServiceResponseType `json:"follower"`
+	Followed  *UserServiceResponseType `json:"followed"`
+	CreatedAt string                   `json:"createdAt"`
+}

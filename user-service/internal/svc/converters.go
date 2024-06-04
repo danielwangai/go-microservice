@@ -26,3 +26,12 @@ func convertUserModelToUserServiceResponseType(u *repo.UserSchemaType) *UserServ
 		UpdatedAt: u.UpdatedAt,
 	}
 }
+
+func convertUserFollowModelToServiceResponseType(followObj *repo.UserFollowerSchemaType) *UserFollowerServiceResponseType {
+	return &UserFollowerServiceResponseType{
+		ID:        followObj.ID.Hex(),
+		Follower:  convertUserModelToUserServiceResponseType(followObj.Follower),
+		Followed:  convertUserModelToUserServiceResponseType(followObj.Followed),
+		CreatedAt: followObj.CreatedAt.String(),
+	}
+}

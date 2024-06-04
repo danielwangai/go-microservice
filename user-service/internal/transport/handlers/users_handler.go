@@ -75,3 +75,24 @@ func (e *Epts) Login(ctx context.Context, service svc.Svc, log *logrus.Logger) h
 		return
 	}
 }
+
+func (e *Epts) FollowUser(ctx context.Context, service svc.Svc, log *logrus.Logger) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var followObj svc.UserFollowAPIRequestType
+		decoder := json.NewDecoder(r.Body)
+		if err := decoder.Decode(&followObj); err != nil {
+			log.WithError(err).Error("invalid request body")
+			respondWithError(w, http.StatusBadRequest, literals.InvalidLoginRequestPayload)
+			return
+		}
+
+		res, err := service.FollowUser(ctx, followObj.Follower, followObj.Followed)
+		if err != nil {
+			respondWithError(w, http.StatusBadRequest, err)
+			return
+		}
+
+		log.Infof("User of id: %s followed user of id: %s successfully: follow object: %v", followObj.Follower, followObj.Followed, res)
+		respondWithJSON(w, http.StatusOK, res)
+	}
+}

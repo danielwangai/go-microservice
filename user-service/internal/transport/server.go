@@ -27,7 +27,6 @@ func NewServer() *Server {
 
 // RunServer initializes services
 func RunServer() error {
-	fmt.Println("Farm API...")
 	log := logging.SetJSONFormatter(logrus.New())
 	// gathers additional information about the env and
 	ctx := context.Background()

@@ -49,6 +49,29 @@ func (s *SVC) RegisterUser(ctx context.Context, u *UserServiceRequestType) (*Use
 	return fSvc, nil
 }
 
+func (s *SVC) FollowUser(ctx context.Context, id1, id2 string) (*UserFollowerServiceResponseType, error) {
+	follower, err := s.dao.FindUserByID(ctx, id1)
+	if err != nil {
+		s.log.WithError(err).Errorf("invalid id for follower user: %s", id1)
+		return nil, err
+	}
+
+	// check if user to be followed exists
+	followed, err := s.dao.FindUserByID(ctx, id2)
+	if err != nil {
+		s.log.WithError(err).Errorf("invalid id for followed user: %s", id2)
+		return nil, err
+	}
+
+	// follow user
+	followObj, err := s.dao.FollowUser(ctx, follower, followed)
+	if err != nil {
+		return nil, err
+	}
+
+	return convertUserFollowModelToServiceResponseType(followObj), nil
+}
+
 func (s *SVC) FindUserById(ctx context.Context, id string) (*UserServiceResponseType, error) {
 	user, err := s.dao.FindUserByID(ctx, id)
 	if err != nil {

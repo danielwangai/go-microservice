@@ -7,7 +7,8 @@ const (
 	HealthcheckEndpointName = "healthcheck"
 
 	// collections
-	UsersCollection = "users"
+	UsersCollection      = "users"
+	UserFollowCollection = "user_followers"
 
 	// user endpoints
 	UsersBaseEndpoint        = "/users"
@@ -15,4 +16,6 @@ const (
 	UsersLoginEndpoint       = "/users/login"
 	RegisterUserEndpointName = "register-user-endpoint-name"
 	LoginEndpointName        = "login-endpoint-name"
+	FollowUserEndpoint       = "/follow-user"
+	FollowUserEndpointName   = "follow-user-endpoint-name"
 )
