@@ -11,4 +11,5 @@ type DAO interface {
 	FindUserByID(ctx context.Context, id string) (*UserSchemaType, error)
 	FindUserByUsername(ctx context.Context, username string) (*UserSchemaType, error)
 	FindUserByEmail(ctx context.Context, email string) (*UserSchemaType, error)
+	FollowUser(ctx context.Context, follower, followed *UserSchemaType) (*UserFollowerSchemaType, error)
 }

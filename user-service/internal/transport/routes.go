@@ -33,4 +33,7 @@ func (r *Router) InitializeRoutes(ctx context.Context, service svc.Svc, log *log
 	r.HandleFunc(literals.UsersLoginEndpoint, e.Login(ctx, service, log)).
 		Methods(http.MethodPost).
 		Name(literals.LoginEndpointName)
+	r.HandleFunc(literals.FollowUserEndpoint, e.FollowUser(ctx, service, log)).
+		Methods(http.MethodPost).
+		Name(literals.FollowUserEndpointName)
 }
