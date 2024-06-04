@@ -49,6 +49,24 @@ func (s *SVC) RegisterUser(ctx context.Context, u *UserServiceRequestType) (*Use
 	return fSvc, nil
 }
 
+func (s *SVC) FindUserById(ctx context.Context, id string) (*UserServiceResponseType, error) {
+	user, err := s.dao.FindUserByID(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	return convertUserModelToUserServiceResponseType(user), nil
+}
+
+func (s *SVC) FindUserByEmail(ctx context.Context, email string) (*UserServiceResponseType, error) {
+	user, err := s.dao.FindUserByEmail(ctx, email)
+	if err != nil {
+		return nil, err
+	}
+
+	return convertUserModelToUserServiceResponseType(user), nil
+}
+
 func hashPassword(password []byte) (string, error) {
 	hash, err := bcrypt.GenerateFromPassword(password, bcrypt.MinCost)
 	if err != nil {

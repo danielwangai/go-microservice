@@ -15,15 +15,14 @@ func convertUserServiceRequestTypeToModelType(u *UserServiceRequestType) *repo.U
 }
 
 func convertUserModelToUserServiceResponseType(u *repo.UserSchemaType) *UserServiceResponseType {
-	{
-		return &UserServiceResponseType{
-			ID:        u.ID.Hex(),
-			FirstName: u.FirstName,
-			LastName:  u.LastName,
-			Email:     u.Email,
-			Username:  u.Username,
-			CreatedAt: u.CreatedAt,
-			UpdatedAt: u.UpdatedAt,
-		}
+	return &UserServiceResponseType{
+		ID:        u.ID.Hex(),
+		FirstName: u.FirstName,
+		LastName:  u.LastName,
+		Email:     u.Email,
+		Username:  u.Username,
+		Password:  u.Password,
+		CreatedAt: u.CreatedAt,
+		UpdatedAt: u.UpdatedAt,
 	}
 }

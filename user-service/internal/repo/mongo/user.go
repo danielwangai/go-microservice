@@ -65,3 +65,17 @@ func (dao *dbClient) FindUserByUsername(ctx context.Context, username string) (*
 
 	return &u, nil
 }
+
+// FindUserByID finds a record matching email
+func (dao *dbClient) FindUserByID(ctx context.Context, id string) (*UserSchemaType, error) {
+	coll := GetCollection(dao.db, literals.UsersCollection)
+	filter := bson.D{{"_id", id}}
+
+	var u UserSchemaType
+	err := coll.FindOne(ctx, filter).Decode(&u)
+	if err != nil {
+		return nil, err
+	}
+
+	return &u, nil
+}
