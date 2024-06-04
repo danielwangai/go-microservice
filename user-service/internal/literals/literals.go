@@ -8,4 +8,8 @@ const (
 
 	// collections
 	UsersCollection = "users"
+
+	// user endpoints
+	UsersBaseEndpoint        = "/users"
+	RegisterUserEndpointName = "register-user-endpoint-name"
 )

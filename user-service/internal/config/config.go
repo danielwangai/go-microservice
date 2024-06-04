@@ -11,17 +11,17 @@ import (
 )
 
 const (
-	envPrefix = "FARM_API"
+	envPrefix = "SERVICE_USER"
 )
 
 // WebServerConfig ...
 type WebServerConfig struct {
-	Port string `envconfig:"FARM_API_SERVER_PORT" split_words:"true"`
+	Port string `envconfig:"SERVICE_USER_SERVER_PORT" split_words:"true"`
 }
 
 type MongoConfig struct {
-	DbURL string `envconfig:"FARM_API_DATABASE_URL"`
-	DbName string `envconfig:"FARM_API_DATABASE_NAME"`
+	DbURL  string `envconfig:"SERVICE_USER_DATABASE_URL"`
+	DbName string `envconfig:"SERVICE_USER_DATABASE_NAME"`
 }
 
 type AppConfig struct {
