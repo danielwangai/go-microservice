@@ -2,6 +2,8 @@ package svc
 
 import (
 	"context"
+	"encoding/json"
+	k "github.com/danielwangai/twiga-foods/user-service/internal/kafka"
 	"github.com/danielwangai/twiga-foods/user-service/internal/literals"
 	"github.com/danielwangai/twiga-foods/user-service/internal/repo/mongo"
 	"github.com/sirupsen/logrus"
@@ -9,13 +11,14 @@ import (
 )
 
 type SVC struct {
-	dao repo.DAO
-	log *logrus.Logger
+	dao   repo.DAO
+	log   *logrus.Logger
+	kafka *k.KafkaConfig
 }
 
 // New returns a new Svc object
-func New(dao repo.DAO, log *logrus.Logger) Svc {
-	return &SVC{dao, log}
+func New(dao repo.DAO, log *logrus.Logger, kafka *k.KafkaConfig) Svc {
+	return &SVC{dao, log, kafka}
 }
 
 func (s *SVC) RegisterUser(ctx context.Context, u *UserServiceRequestType) (*UserServiceResponseType, literals.Error) {
@@ -44,9 +47,20 @@ func (s *SVC) RegisterUser(ctx context.Context, u *UserServiceRequestType) (*Use
 	}
 
 	// convert from user model type to user response type for service layer
-	fSvc := convertUserModelToUserServiceResponseType(res)
+	uSvc := convertUserModelToUserServiceResponseType(res)
 
-	return fSvc, nil
+	// send to kafka
+	uByte, err := json.Marshal(uSvc)
+	if err != nil {
+		return nil, map[string]string{"error": err.Error()}
+	}
+	err = s.kafka.ProduceMessage(uSvc.ID, uByte)
+	if err != nil {
+		s.log.WithError(err).Errorf("failed to write user: %v to kafka topic", uSvc)
+		return nil, map[string]string{"error": err.Error()}
+	}
+
+	return uSvc, nil
 }
 
 func (s *SVC) FollowUser(ctx context.Context, id1, id2 string) (*UserFollowerServiceResponseType, error) {
