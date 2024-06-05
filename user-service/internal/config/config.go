@@ -24,9 +24,17 @@ type MongoConfig struct {
 	DbName string `envconfig:"SERVICE_USER_DATABASE_NAME"`
 }
 
+type KafkaConfig struct {
+	BootstrapServers string `envconfig:"SERVICE_USER_KAFKA_BOOTSTRAP_SERVERS" split_words:"true"`
+	ClientID         string `envconfig:"SERVICE_USER_KAFKA_CLIENT_ID"`
+	AutoOffsetReset  string `envconfig:"SERVICE_USER_KAFKA_AUTO_OFFSET_RESET"`
+	Topic            string `envconfig:"SERVICE_USER_KAFKA_CREATE_USER_TOPIC"`
+}
+
 type AppConfig struct {
 	WebServer *WebServerConfig
 	DB        *MongoConfig
+	Kafka     *KafkaConfig
 }
 
 // FromEnv loads the app config from environment variables
