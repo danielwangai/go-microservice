@@ -1,3 +1,10 @@
 package svc
 
-type Svc interface{}
+import (
+	"context"
+	"github.com/danielwangai/twiga-foods/post-service/internal/literals"
+)
+
+type Svc interface {
+	CreatePost(ctx context.Context, p *PostServiceRequestType) (*PostServiceResponseType, literals.Error)
+}
