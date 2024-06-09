@@ -67,3 +67,12 @@ func (s *SVC) GetPosts(ctx context.Context) ([]*PostServiceResponseType, error) 
 
 	return res, nil
 }
+
+func (s *SVC) FindPostById(ctx context.Context, id string) (*PostServiceResponseType, error) {
+	user, err := s.dao.FindPostByID(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	return convertPostResponseModelTypeToSvcType(user), nil
+}
