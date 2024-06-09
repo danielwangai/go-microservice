@@ -13,7 +13,7 @@ type UserSchemaType struct {
 	Username  string             `bson:"username"`
 	Password  string             `bson:"password"`
 	CreatedAt time.Time          `bson:"createdAt"`
-	UpdatedAt time.Time          `bson:"UpdatedAt"`
+	UpdatedAt time.Time          `bson:"updatedAt"`
 }
 
 type PostSchemaType struct {
@@ -22,11 +22,20 @@ type PostSchemaType struct {
 	Content   string             `bson:"content"`
 	CreatedBy *UserSchemaType    `bson:"createdBy"`
 	CreatedAt time.Time          `bson:"createdAt"`
-	UpdatedAt time.Time          `bson:"UpdatedAt"`
+	UpdatedAt time.Time          `bson:"updatedAt"`
 }
 
 type PostModelRequestType struct {
 	Title   string
 	Content string
 	Creator *UserSchemaType
+}
+
+type CommentSchemaType struct {
+	ID          primitive.ObjectID `bson:"_id,omitempty"`
+	Comment     string             `bson:"comment"`
+	Post        *PostSchemaType    `bson:"post"`
+	CommentedBy *UserSchemaType    `bson:"commentedBy"`
+	CreatedAt   time.Time          `bson:"createdAt"`
+	UpdatedAt   time.Time          `bson:"updatedAt"`
 }

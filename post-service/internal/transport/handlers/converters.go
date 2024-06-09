@@ -35,3 +35,23 @@ func convertUserSvcResponseTypeToAPIType(p *svc.UserServiceResponseType) *svc.Us
 		UpdatedAt: p.UpdatedAt.String(),
 	}
 }
+
+func convertAddCommentAPIRequestTypeToSvcType(c *svc.CommentAPIRequestType) *svc.CommentServiceRequestType {
+	return &svc.CommentServiceRequestType{
+		Comment: c.Comment,
+		//PostID:      c.PostID,
+		CommenterID: c.CommenterID,
+	}
+}
+
+func convertCommentSvcResponseTypeToAPIType(c *svc.CommentServiceResponseType) *svc.CommentAPIResponseType {
+	return &svc.CommentAPIResponseType{
+		ID:        c.ID,
+		Title:     c.Title,
+		Comment:   c.Comment,
+		Post:      convertPostSvcResponseTypeToAPIType(c.Post),
+		CreatedBy: convertUserSvcResponseTypeToAPIType(c.CreatedBy),
+		CreatedAt: c.CreatedAt.String(),
+		UpdatedAt: c.UpdatedAt.String(),
+	}
+}
