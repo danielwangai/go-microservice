@@ -14,4 +14,5 @@ const (
 	// user endpoints
 	PostsBaseEndpoint      = "/posts"
 	CreatePostEndpointName = "create-post-endpoint"
+	GetPostsEndpointName   = "get-posts-endpoint"
 )

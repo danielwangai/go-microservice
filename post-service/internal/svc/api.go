@@ -7,4 +7,5 @@ import (
 
 type Svc interface {
 	CreatePost(ctx context.Context, p *PostServiceRequestType) (*PostServiceResponseType, literals.Error)
+	GetPosts(ctx context.Context) ([]*PostServiceResponseType, error)
 }

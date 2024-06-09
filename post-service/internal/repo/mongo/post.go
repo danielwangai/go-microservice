@@ -63,3 +63,19 @@ func (dao *dbClient) FindPostByTitleAndCreator(ctx context.Context, title, creat
 
 	return res[0], nil
 }
+
+// GetPosts fetches all posts
+func (dao *dbClient) GetPosts(ctx context.Context) ([]*PostSchemaType, error) {
+	coll := GetCollection(dao.db, literals.PostsCollection)
+
+	cursor, err := coll.Find(ctx, bson.M{})
+	if err != nil {
+		return nil, err
+	}
+	var posts []*PostSchemaType
+	if err = cursor.All(context.TODO(), &posts); err != nil {
+		return nil, err
+	}
+
+	return posts, nil
+}

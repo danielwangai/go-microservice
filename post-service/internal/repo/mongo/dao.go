@@ -10,4 +10,5 @@ type DAO interface {
 	CreatePost(ctx context.Context, p *PostSchemaType) (*PostSchemaType, literals.Error)
 	FindUserByID(ctx context.Context, id string) (*UserSchemaType, error)
 	FindPostByTitleAndCreator(ctx context.Context, title, creatorId string) (*PostSchemaType, error)
+	GetPosts(ctx context.Context) ([]*PostSchemaType, error)
 }

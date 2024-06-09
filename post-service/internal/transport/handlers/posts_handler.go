@@ -4,15 +4,15 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/danielwangai/twiga-foods/post-service/internal/literals"
-	"github.com/danielwangai/twiga-foods/post-service/internal/svc"
+	s "github.com/danielwangai/twiga-foods/post-service/internal/svc"
 	"net/http"
 
 	"github.com/sirupsen/logrus"
 )
 
-func (e *Epts) CreatePost(ctx context.Context, service svc.Svc, log *logrus.Logger) http.HandlerFunc {
+func (e *Epts) CreatePost(ctx context.Context, service s.Svc, log *logrus.Logger) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var p svc.PostAPIRequestType
+		var p s.PostAPIRequestType
 		decoder := json.NewDecoder(r.Body)
 		if err := decoder.Decode(&p); err != nil {
 			log.WithError(literals.InvalidCreatePostRequestPayload).Error("invalid create post payload")
@@ -30,5 +30,24 @@ func (e *Epts) CreatePost(ctx context.Context, service svc.Svc, log *logrus.Logg
 
 		log.Infof("post created successfully: %v", post)
 		respondWithJSON(w, http.StatusCreated, convertPostSvcResponseTypeToAPIType(post))
+	}
+}
+
+func (e *Epts) GetPosts(ctx context.Context, service s.Svc, log *logrus.Logger) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		posts, err := service.GetPosts(ctx)
+		if err != nil {
+			log.WithError(err).Error("error getting posts")
+			respondWithError(w, http.StatusInternalServerError, err)
+			return
+		}
+
+		var res []*s.PostAPIResponseType
+		for _, post := range posts {
+			res = append(res, convertPostSvcResponseTypeToAPIType(post))
+		}
+
+		log.Infof("posts retrieved successfully: %v", res)
+		respondWithJSON(w, http.StatusOK, res)
 	}
 }
