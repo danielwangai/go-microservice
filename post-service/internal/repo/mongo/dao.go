@@ -12,4 +12,5 @@ type DAO interface {
 	FindPostByTitleAndCreator(ctx context.Context, title, creatorId string) (*PostSchemaType, error)
 	GetPosts(ctx context.Context) ([]*PostSchemaType, error)
 	FindPostByID(ctx context.Context, id string) (*PostSchemaType, error)
+	AddComment(ctx context.Context, c *CommentSchemaType) (*CommentSchemaType, literals.Error)
 }

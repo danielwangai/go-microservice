@@ -15,6 +15,7 @@ type Endpoints interface {
 	CreatePost(ctx context.Context, service svc.Svc, log *logrus.Logger) http.HandlerFunc
 	GetPosts(ctx context.Context, service svc.Svc, log *logrus.Logger) http.HandlerFunc
 	FindPostById(ctx context.Context, service svc.Svc, log *logrus.Logger) http.HandlerFunc
+	AddComment(ctx context.Context, service svc.Svc, log *logrus.Logger) http.HandlerFunc
 }
 
 type Epts struct{}

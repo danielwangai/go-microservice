@@ -19,6 +19,21 @@ func validateCreatePostInputs(u *PostServiceRequestType) literals.Error {
 		errs["creatorId"] = literals.PostCreatorIDRequiredError.Error()
 	}
 
-	log.Printf("Begin valation: svc layer: errors: %v", errs == nil)
+	return errs
+}
+
+func validateAddCommentInputs(c *CommentServiceRequestType) literals.Error {
+	errs := literals.Error{}
+
+	if c.Comment == "" {
+		errs["comment"] = literals.CommentRequiredError.Error()
+	}
+	if c.PostID == "" {
+		errs["postId"] = literals.CommentPostIDRequiredError.Error()
+	}
+	if c.CommenterID == "" {
+		errs["commenterId"] = literals.CommenterIDRequiredError.Error()
+	}
+
 	return errs
 }

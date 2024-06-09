@@ -36,4 +36,7 @@ func (r *Router) InitializeRoutes(ctx context.Context, service svc.Svc, log *log
 	r.HandleFunc(literals.PostByIDEndpoint, e.FindPostById(ctx, service, log)).
 		Methods(http.MethodGet).
 		Name(literals.FindPostByIDEndpointName)
+	r.HandleFunc(literals.PostCommentBaseEndpoint, e.AddComment(ctx, service, log)).
+		Methods(http.MethodPost).
+		Name(literals.AddCommentToPostEndpointName)
 }

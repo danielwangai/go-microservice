@@ -76,3 +76,39 @@ func (s *SVC) FindPostById(ctx context.Context, id string) (*PostServiceResponse
 
 	return convertPostResponseModelTypeToSvcType(user), nil
 }
+
+func (s *SVC) AddComment(ctx context.Context, c *CommentServiceRequestType) (*CommentServiceResponseType, literals.Error) {
+	s.log.Infof("Comment: %v", c)
+	// handle validation
+	errs := validateAddCommentInputs(c)
+	if len(errs) > 0 {
+		return nil, errs
+	}
+
+	u, err := s.dao.FindUserByID(ctx, c.CommenterID)
+	if err != nil {
+		return nil, map[string]string{"error": err.Error()}
+	}
+
+	// check if post title by creator is a duplicate
+	p, err := s.dao.FindPostByID(ctx, c.PostID)
+	if err != nil && !errors.Is(err, literals.PostMatchingIDNotFoundError) {
+		return nil, map[string]string{"error": err.Error()}
+	}
+
+	cModel := &repo.CommentSchemaType{
+		Comment:     c.Comment,
+		CommentedBy: u,
+		Post:        p,
+	}
+
+	// create post
+	comment, errs := s.dao.AddComment(ctx, cModel)
+	if errs != nil {
+		return nil, errs
+	}
+
+	// send to kafka for notification purposes
+
+	return convertCommentResponseModelTypeToSvcType(comment), nil
+}

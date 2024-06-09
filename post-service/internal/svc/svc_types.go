@@ -65,3 +65,41 @@ type UserAPIResponseType struct {
 	CreatedAt string `json:"createdAt"`
 	UpdatedAt string `json:"updatedAt"`
 }
+
+// CommentAPIRequestType structure of a comment in the API layer
+type CommentAPIRequestType struct {
+	Comment     string `json:"comment"`
+	CommenterID string `json:"commenterId"`
+	//PostID      string `json:"postId"`
+}
+
+// CommentServiceRequestType structure of a comment request payload in the service layer
+// after conversion from API layer
+type CommentServiceRequestType struct {
+	Comment     string
+	PostID      string
+	CommenterID string
+}
+
+// CommentServiceResponseType structure of a comment after conversion from model layer
+// after creation/update/retrieval
+type CommentServiceResponseType struct {
+	ID        string
+	Title     string
+	Comment   string
+	Post      *PostServiceResponseType
+	CreatedBy *UserServiceResponseType
+	CreatedAt time.Time
+	UpdatedAt time.Time
+}
+
+// CommentAPIResponseType structure of a comment in the API layer
+type CommentAPIResponseType struct {
+	ID        string               `json:"id"`
+	Title     string               `json:"title"`
+	Comment   string               `json:"comment"`
+	Post      *PostAPIResponseType `json:"post"`
+	CreatedBy *UserAPIResponseType `json:"createdBy"`
+	CreatedAt string               `json:"createdAt"`
+	UpdatedAt string               `json:"updatedAt"`
+}
