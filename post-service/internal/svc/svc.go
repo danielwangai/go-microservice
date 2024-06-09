@@ -52,3 +52,27 @@ func (s *SVC) CreatePost(ctx context.Context, p *PostServiceRequestType) (*PostS
 
 	return convertPostResponseModelTypeToSvcType(post), nil
 }
+
+func (s *SVC) GetPosts(ctx context.Context) ([]*PostServiceResponseType, error) {
+	posts, err := s.dao.GetPosts(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	var res []*PostServiceResponseType
+	// convert posts list from model type to svc type
+	for i := range posts {
+		res = append(res, convertPostResponseModelTypeToSvcType(posts[i]))
+	}
+
+	return res, nil
+}
+
+func (s *SVC) FindPostById(ctx context.Context, id string) (*PostServiceResponseType, error) {
+	user, err := s.dao.FindPostByID(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	return convertPostResponseModelTypeToSvcType(user), nil
+}

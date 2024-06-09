@@ -63,3 +63,39 @@ func (dao *dbClient) FindPostByTitleAndCreator(ctx context.Context, title, creat
 
 	return res[0], nil
 }
+
+// GetPosts fetches all posts
+func (dao *dbClient) GetPosts(ctx context.Context) ([]*PostSchemaType, error) {
+	coll := GetCollection(dao.db, literals.PostsCollection)
+
+	cursor, err := coll.Find(ctx, bson.M{})
+	if err != nil {
+		return nil, err
+	}
+	var posts []*PostSchemaType
+	if err = cursor.All(context.TODO(), &posts); err != nil {
+		return nil, err
+	}
+
+	return posts, nil
+}
+
+// FindPostByID finds a record matching post
+func (dao *dbClient) FindPostByID(ctx context.Context, id string) (*PostSchemaType, error) {
+	coll := GetCollection(dao.db, literals.PostsCollection)
+	// convert id string to object id
+	objectID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return nil, err
+	}
+	filter := bson.M{"_id": objectID}
+
+	var p PostSchemaType
+	err = coll.FindOne(ctx, filter).Decode(&p)
+	if err != nil {
+		dao.log.WithError(err).Errorf("DB:Error: a error ocurred when finding post by id: %s", id)
+		return nil, err
+	}
+
+	return &p, nil
+}

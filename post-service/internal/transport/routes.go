@@ -30,4 +30,10 @@ func (r *Router) InitializeRoutes(ctx context.Context, service svc.Svc, log *log
 	r.HandleFunc(literals.PostsBaseEndpoint, e.CreatePost(ctx, service, log)).
 		Methods(http.MethodPost).
 		Name(literals.CreatePostEndpointName)
+	r.HandleFunc(literals.PostsBaseEndpoint, e.GetPosts(ctx, service, log)).
+		Methods(http.MethodGet).
+		Name(literals.GetPostsEndpointName)
+	r.HandleFunc(literals.PostByIDEndpoint, e.FindPostById(ctx, service, log)).
+		Methods(http.MethodGet).
+		Name(literals.FindPostByIDEndpointName)
 }

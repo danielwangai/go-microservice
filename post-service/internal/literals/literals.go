@@ -11,7 +11,10 @@ const (
 	PostsCollection = "posts"
 	UsersCollection = "users"
 
-	// user endpoints
-	PostsBaseEndpoint      = "/posts"
-	CreatePostEndpointName = "create-post-endpoint"
+	// post endpoints
+	PostsBaseEndpoint        = "/posts"
+	PostByIDEndpoint         = PostsBaseEndpoint + "/{id}"
+	CreatePostEndpointName   = "create-post-endpoint"
+	GetPostsEndpointName     = "get-posts-endpoint"
+	FindPostByIDEndpointName = "get-posts-endpoint"
 )
