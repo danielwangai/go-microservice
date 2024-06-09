@@ -27,4 +27,7 @@ func (r *Router) InitializeRoutes(ctx context.Context, service svc.Svc, log *log
 	r.HandleFunc(literals.HealthcheckEndpoint, e.Healthcheck(ctx, log, dbClient)).
 		Methods(http.MethodGet).
 		Name(literals.HealthcheckEndpointName)
+	r.HandleFunc(literals.PostsBaseEndpoint, e.CreatePost(ctx, service, log)).
+		Methods(http.MethodPost).
+		Name(literals.CreatePostEndpointName)
 }
