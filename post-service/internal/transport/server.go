@@ -51,8 +51,22 @@ func RunServer() error {
 	dao := mgo.New(db, log)
 
 	service := svc.New(dao, log)
+
+	// kafka
+	conn, err := connectConsumer([]string{cfg.Kafka.Broker})
+	if err != nil {
+		log.WithError(err).Error("Error connecting to consumer")
+		return err
+	}
+
+	consumerConfig := NewKafkaConsumerConfig(conn, service, log)
+
+	consumerConfig.ConsumeUsers([]string{cfg.Kafka.Broker}, cfg.Kafka.Topic)
+
+	// initialize routes
 	server.Router.InitializeRoutes(ctx, service, log, dbClient)
 
+	// get new users from topic
 	log.Infof("starting server on port %s", cfg.WebServer.Port)
 	if err := http.ListenAndServe(":"+cfg.WebServer.Port, *server.Router); err != nil {
 		log.WithError(err).Error("could not start the HTTP server")

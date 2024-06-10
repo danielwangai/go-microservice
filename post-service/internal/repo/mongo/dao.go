@@ -7,8 +7,11 @@ import (
 
 //go:generate mockgen -destination=mocks/mock_dao.go -package=mocks . DAO
 type DAO interface {
-	CreatePost(ctx context.Context, p *PostSchemaType) (*PostSchemaType, literals.Error)
+	// user methods
 	FindUserByID(ctx context.Context, id string) (*UserSchemaType, error)
+	AddUser(ctx context.Context, u *UserSchemaType) (*UserSchemaType, literals.Error)
+	// post methods
+	CreatePost(ctx context.Context, p *PostSchemaType) (*PostSchemaType, literals.Error)
 	FindPostByTitleAndCreator(ctx context.Context, title, creatorId string) (*PostSchemaType, error)
 	GetPosts(ctx context.Context) ([]*PostSchemaType, error)
 	FindPostByID(ctx context.Context, id string) (*PostSchemaType, error)

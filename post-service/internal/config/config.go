@@ -24,9 +24,17 @@ type MongoConfig struct {
 	DbName string `envconfig:"POST_SERVICE_DATABASE_NAME"`
 }
 
+type KafkaConfig struct {
+	Topic   string `envconfig:"POST_SERVICE_KAFKA_TOPIC"`
+	GroupID string `envconfig:"POST_SERVICE_KAFKA_GROUP_ID"`
+	Network string `envconfig:"POST_SERVICE_KAFKA_NETWORK"`
+	Broker  string `envconfig:"POST_SERVICE_KAFKA_BROKER"`
+}
+
 type AppConfig struct {
 	WebServer *WebServerConfig
 	DB        *MongoConfig
+	Kafka     *KafkaConfig
 }
 
 // FromEnv loads the app config from environment variables

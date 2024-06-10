@@ -37,3 +37,22 @@ func validateAddCommentInputs(c *CommentServiceRequestType) literals.Error {
 
 	return errs
 }
+
+func validateRegisterUserInputs(u *UserServiceRequestType) literals.Error {
+	errs := literals.Error{}
+
+	if u.FirstName == "" {
+		errs["firstName"] = literals.UserFirstNameRequiredError.Error()
+	}
+	if u.LastName == "" {
+		errs["lastName"] = literals.UserLastNameRequiredError.Error()
+	}
+	if u.Email == "" {
+		errs["email"] = literals.UserEmailRequiredError.Error()
+	}
+	if u.Password == "" {
+		errs["password"] = literals.UserPasswordRequiredError.Error()
+	}
+
+	return errs
+}

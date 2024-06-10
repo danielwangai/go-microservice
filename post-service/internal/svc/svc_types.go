@@ -42,6 +42,17 @@ type PostAPIRequestType struct {
 	CreatorID string `json:"creatorId"`
 }
 
+// UserServiceRequestType request payload of create/update operations in the service layer
+// after conversion from API/http layer
+type UserServiceRequestType struct {
+	ID        string
+	FirstName string
+	LastName  string
+	Email     string
+	Username  string
+	Password  string
+}
+
 // UserServiceResponseType structure of a user after conversion from the model layer
 type UserServiceResponseType struct {
 	ID        string

@@ -22,7 +22,7 @@ func convertPostResponseModelTypeToSvcType(p *repo.PostSchemaType) *PostServiceR
 
 func convertUserModelResponseTypeToSvcType(u *repo.UserSchemaType) *UserServiceResponseType {
 	return &UserServiceResponseType{
-		ID:        u.ID.Hex(),
+		ID:        u.ID,
 		FirstName: u.FirstName,
 		LastName:  u.LastName,
 		Email:     u.Email,
@@ -41,5 +41,29 @@ func convertCommentResponseModelTypeToSvcType(c *repo.CommentSchemaType) *Commen
 		CreatedBy: convertUserModelResponseTypeToSvcType(c.CommentedBy),
 		CreatedAt: c.CreatedAt,
 		UpdatedAt: c.UpdatedAt,
+	}
+}
+
+func convertUserServiceRequestTypeToModelType(u *UserServiceRequestType) *repo.UserSchemaType {
+	return &repo.UserSchemaType{
+		ID:        u.ID,
+		FirstName: u.FirstName,
+		LastName:  u.LastName,
+		Email:     u.Email,
+		Username:  u.Username,
+		Password:  u.Password,
+	}
+}
+
+func convertUserModelToUserServiceResponseType(u *repo.UserSchemaType) *UserServiceResponseType {
+	return &UserServiceResponseType{
+		ID:        u.ID,
+		FirstName: u.FirstName,
+		LastName:  u.LastName,
+		Email:     u.Email,
+		Username:  u.Username,
+		Password:  u.Password,
+		CreatedAt: u.CreatedAt,
+		UpdatedAt: u.UpdatedAt,
 	}
 }

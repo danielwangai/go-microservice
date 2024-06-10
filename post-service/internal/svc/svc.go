@@ -11,6 +11,7 @@ import (
 type SVC struct {
 	dao repo.DAO
 	log *logrus.Logger
+	//kafka *transport.ReaderConfig
 }
 
 // New returns a new Svc object
@@ -111,4 +112,25 @@ func (s *SVC) AddComment(ctx context.Context, c *CommentServiceRequestType) (*Co
 	// send to kafka for notification purposes
 
 	return convertCommentResponseModelTypeToSvcType(comment), nil
+}
+
+func (s *SVC) AddUser(ctx context.Context, u *UserServiceRequestType) (*UserServiceResponseType, literals.Error) {
+	errs := validateRegisterUserInputs(u)
+	if len(errs) > 0 {
+		return nil, errs
+	}
+
+	// convert user service type to model layer type
+	uModel := convertUserServiceRequestTypeToModelType(u)
+
+	// save to db
+	res, errs := s.dao.AddUser(ctx, uModel)
+	if len(errs) > 0 {
+		return nil, errs
+	}
+
+	// convert from user model type to user response type for service layer
+	uSvc := convertUserModelToUserServiceResponseType(res)
+
+	return uSvc, nil
 }
