@@ -21,7 +21,7 @@ func convertUserModelToUserServiceResponseType(u *repo.UserSchemaType) *UserServ
 		LastName:  u.LastName,
 		Email:     u.Email,
 		Username:  u.Username,
-		Password:  u.Password,
+		Password:  "",
 		CreatedAt: u.CreatedAt,
 		UpdatedAt: u.UpdatedAt,
 	}

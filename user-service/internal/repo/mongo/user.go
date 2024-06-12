@@ -23,7 +23,7 @@ func (dao *dbClient) RegisterUser(ctx context.Context, u *UserSchemaType) (*User
 		{"firstName", u.FirstName},
 		{"lastName", u.LastName},
 		{"email", u.Email},
-		{"phoneNumber", u.Username},
+		{"username", u.Username},
 		{"password", u.Password},
 		{"createdAt", time.Now()},
 		{"updatedAt", nil},
