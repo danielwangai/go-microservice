@@ -18,4 +18,10 @@ const (
 	LoginEndpointName        = "login-endpoint-name"
 	FollowUserEndpoint       = "/follow-user"
 	FollowUserEndpointName   = "follow-user-endpoint-name"
+
+	// kafka topics
+	NewUserTopic    = "new-users-events"
+	NewPostTopic    = "new-post-notification-events"
+	NewCommentTopic = "new-comment-notification-events"
+	FollowUserTopic = "follow-user-notification-events"
 )

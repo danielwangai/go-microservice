@@ -3,7 +3,8 @@ package transport
 import (
 	"context"
 	"fmt"
-	k "github.com/danielwangai/twiga-foods/user-service/internal/kafka"
+	"github.com/danielwangai/twiga-foods/user-service/internal/kafka"
+	"github.com/danielwangai/twiga-foods/user-service/internal/literals"
 	"github.com/danielwangai/twiga-foods/user-service/internal/svc"
 	"net/http"
 
@@ -51,16 +52,21 @@ func RunServer() error {
 
 	dao := mgo.New(db, log)
 
-	// kafka
-	producer, err := k.NewKafkaProducer(cfg.Kafka.BootstrapServers)
-	if err != nil {
-		log.WithError(err).Error("failed to create new kafka producer")
-		return err
+	// kafka producer
+	kafkaTopicsMap := map[string]string{
+		literals.NewUserTopic:    cfg.Kafka.Topics.NewUsersTopic,
+		literals.NewPostTopic:    cfg.Kafka.Topics.NewPostNotificationTopic,
+		literals.NewCommentTopic: cfg.Kafka.Topics.NewCommentNotificationTopic,
+		literals.FollowUserTopic: cfg.Kafka.Topics.FollowUserNotificationTopic,
 	}
 
-	kafka := k.New(producer, cfg.Kafka.BootstrapServers, cfg.Kafka.Topic)
+	kafkaProducer, err := kafka.ConnectProducer(
+		kafkaTopicsMap,
+		[]string{cfg.Kafka.Broker},
+		log)
 
-	service := svc.New(dao, log, kafka)
+	service := svc.New(dao, log, kafkaProducer)
+
 	server.Router.InitializeRoutes(ctx, service, log, dbClient)
 
 	log.Infof("starting server on port %s", cfg.WebServer.Port)

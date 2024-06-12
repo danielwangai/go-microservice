@@ -13,11 +13,11 @@ import (
 type SVC struct {
 	dao   repo.DAO
 	log   *logrus.Logger
-	kafka *k.KafkaConfig
+	kafka *k.KafkaProducer
 }
 
 // New returns a new Svc object
-func New(dao repo.DAO, log *logrus.Logger, kafka *k.KafkaConfig) Svc {
+func New(dao repo.DAO, log *logrus.Logger, kafka *k.KafkaProducer) Svc {
 	return &SVC{dao, log, kafka}
 }
 
@@ -54,7 +54,7 @@ func (s *SVC) RegisterUser(ctx context.Context, u *UserServiceRequestType) (*Use
 	if err != nil {
 		return nil, map[string]string{"error": err.Error()}
 	}
-	err = s.kafka.ProduceMessage(uSvc.ID, uByte)
+	err = s.kafka.PushMessageToQueue(literals.NewUserTopic, uSvc.ID, uByte)
 	if err != nil {
 		s.log.WithError(err).Errorf("failed to write user: %v to kafka topic", uSvc)
 		return nil, map[string]string{"error": err.Error()}
@@ -83,7 +83,20 @@ func (s *SVC) FollowUser(ctx context.Context, id1, id2 string) (*UserFollowerSer
 		return nil, err
 	}
 
-	return convertUserFollowModelToServiceResponseType(followObj), nil
+	followSvc := convertUserFollowModelToServiceResponseType(followObj)
+
+	// send to kafka
+	followByte, err := json.Marshal(followSvc)
+	if err != nil {
+		return nil, literals.ObjectToByteArrayConversionError
+	}
+	err = s.kafka.PushMessageToQueue(literals.FollowUserTopic, followSvc.ID, followByte)
+	if err != nil {
+		s.log.WithError(err).Errorf("failed to write follow record: %v to kafka topic", followByte)
+		return nil, literals.FailedToPublishMessageToKafka
+	}
+
+	return followSvc, nil
 }
 
 func (s *SVC) FindUserById(ctx context.Context, id string) (*UserServiceResponseType, error) {
