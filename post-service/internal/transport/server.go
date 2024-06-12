@@ -3,6 +3,7 @@ package transport
 import (
 	"context"
 	"fmt"
+	"github.com/danielwangai/twiga-foods/post-service/internal/kafka"
 	"github.com/danielwangai/twiga-foods/post-service/internal/svc"
 	"net/http"
 
@@ -50,7 +51,13 @@ func RunServer() error {
 
 	dao := mgo.New(db, log)
 
-	service := svc.New(dao, log)
+	// kafka producer
+	kafkaProducer, err := kafka.ConnectProducer(
+		cfg.Kafka.NewPostNotificationTopic,
+		[]string{cfg.Kafka.Broker},
+		log)
+
+	service := svc.New(dao, log, kafkaProducer)
 
 	// kafka
 	conn, err := connectConsumer([]string{cfg.Kafka.Broker})
@@ -61,12 +68,11 @@ func RunServer() error {
 
 	consumerConfig := NewKafkaConsumerConfig(conn, service, log)
 
-	consumerConfig.ConsumeUsers([]string{cfg.Kafka.Broker}, cfg.Kafka.Topic)
+	go consumerConfig.ConsumeUsers([]string{cfg.Kafka.Broker}, cfg.Kafka.NewUsersTopic)
 
 	// initialize routes
 	server.Router.InitializeRoutes(ctx, service, log, dbClient)
 
-	// get new users from topic
 	log.Infof("starting server on port %s", cfg.WebServer.Port)
 	if err := http.ListenAndServe(":"+cfg.WebServer.Port, *server.Router); err != nil {
 		log.WithError(err).Error("could not start the HTTP server")
