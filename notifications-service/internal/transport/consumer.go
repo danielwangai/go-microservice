@@ -1,6 +1,8 @@
 package transport
 
 import (
+	"context"
+	"encoding/json"
 	"github.com/Shopify/sarama"
 	"github.com/danielwangai/twiga-foods/notifications-service/internal/svc"
 	"github.com/sirupsen/logrus"
@@ -63,6 +65,19 @@ func (k *KafkaConsumerConfig) ConsumeNewComments(brokers []string, topic string)
 			case msg := <-consumer.Messages():
 				msgCount++
 				k.log.Infof("Received message Count %d: | Topic(%s) | Message(%s) \n", msgCount, string(msg.Topic), string(msg.Value))
+
+				var c *svc.CommentServiceType
+				if err = json.Unmarshal(msg.Value, &c); err != nil {
+					k.log.WithError(err).Error("Error unmarshalling comment data from kafka")
+					break
+				}
+				// save to database
+				comment, errs := k.svc.AddComment(context.Background(), c)
+				if errs != nil {
+					k.log.Errorf("error adding comment in kafka consumer: %v", errs)
+				}
+
+				k.log.Infof("comment inserted to database after consumption from kafka: %v", comment)
 			case <-sigchan:
 				k.log.Infoln("Interrupt is detected")
 				doneCh <- struct{}{}
