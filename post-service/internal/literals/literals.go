@@ -20,4 +20,9 @@ const (
 	GetPostsEndpointName         = "get-posts-endpoint"
 	FindPostByIDEndpointName     = "get-posts-endpoint"
 	AddCommentToPostEndpointName = "post-comment-endpoint"
+
+	// kafka topics
+	NewUserTopic    = "new-users-events"
+	NewPostTopic    = "new-post-notification-events"
+	NewCommentTopic = "new-comment-notification-events"
 )
