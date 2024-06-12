@@ -36,7 +36,7 @@ func connectConsumer(brokersUrl []string) (sarama.Consumer, error) {
 	return conn, nil
 }
 
-// ConsumeUsers listens for new users and saves to db
+// ConsumeNewComments listens for new users and saves to db
 func (k *KafkaConsumerConfig) ConsumeNewComments(brokers []string, topic string) {
 	worker, err := connectConsumer(brokers)
 	if err != nil {
@@ -66,7 +66,7 @@ func (k *KafkaConsumerConfig) ConsumeNewComments(brokers []string, topic string)
 				msgCount++
 				k.log.Infof("Received message Count %d: | Topic(%s) | Message(%s) \n", msgCount, string(msg.Topic), string(msg.Value))
 
-				var c *svc.CommentServiceType
+				var c *svc.CommentServiceRequestType
 				if err = json.Unmarshal(msg.Value, &c); err != nil {
 					k.log.WithError(err).Error("Error unmarshalling comment data from kafka")
 					break
