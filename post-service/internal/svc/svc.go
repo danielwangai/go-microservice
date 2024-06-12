@@ -61,7 +61,7 @@ func (s *SVC) CreatePost(ctx context.Context, p *PostServiceRequestType) (*PostS
 	if err != nil {
 		return nil, map[string]string{"error": err.Error()}
 	}
-	err = s.kafka.PushPostNotificationToQueue(svcPost.ID, pBytes)
+	err = s.kafka.PushMessageToQueue(literals.NewPostTopic, svcPost.ID, pBytes)
 	if err != nil {
 		s.log.WithError(err).Errorf("failed to push post notification to queue")
 		return nil, map[string]string{"error": err.Error()}
@@ -124,10 +124,21 @@ func (s *SVC) AddComment(ctx context.Context, c *CommentServiceRequestType) (*Co
 	if errs != nil {
 		return nil, errs
 	}
-
+	commentSvc := convertCommentResponseModelTypeToSvcType(comment)
 	// send to kafka for notification purposes
 
-	return convertCommentResponseModelTypeToSvcType(comment), nil
+	// write to kafka that a new post has been created for notification purposes
+	// convert post to bytes
+	pBytes, err := json.Marshal(commentSvc)
+	if err != nil {
+		return nil, map[string]string{"error": err.Error()}
+	}
+	err = s.kafka.PushMessageToQueue(literals.NewCommentTopic, commentSvc.ID, pBytes)
+	if err != nil {
+		s.log.WithError(err).Errorf("failed to push new comment notification to queue")
+		return nil, map[string]string{"error": err.Error()}
+	}
+	return commentSvc, nil
 }
 
 func (s *SVC) AddUser(ctx context.Context, u *UserServiceRequestType) (*UserServiceResponseType, literals.Error) {

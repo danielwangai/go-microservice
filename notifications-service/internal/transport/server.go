@@ -3,16 +3,15 @@ package transport
 import (
 	"context"
 	"fmt"
-	"github.com/danielwangai/twiga-foods/post-service/internal/kafka"
-	"github.com/danielwangai/twiga-foods/post-service/internal/literals"
-	"github.com/danielwangai/twiga-foods/post-service/internal/svc"
+	"github.com/danielwangai/twiga-foods/notifications-service/internal/literals"
+	"github.com/danielwangai/twiga-foods/notifications-service/internal/svc"
 	"net/http"
 
 	"github.com/sirupsen/logrus"
 
-	"github.com/danielwangai/twiga-foods/post-service/internal/config"
-	"github.com/danielwangai/twiga-foods/post-service/internal/logging"
-	mgo "github.com/danielwangai/twiga-foods/post-service/internal/repo/mongo"
+	"github.com/danielwangai/twiga-foods/notifications-service/internal/config"
+	"github.com/danielwangai/twiga-foods/notifications-service/internal/logging"
+	mgo "github.com/danielwangai/twiga-foods/notifications-service/internal/repo/mongo"
 )
 
 // Server ...
@@ -59,12 +58,7 @@ func RunServer() error {
 		literals.NewCommentTopic: cfg.Kafka.Topics.NewCommentNotificationTopic,
 	}
 
-	kafkaProducer, err := kafka.ConnectProducer(
-		kafkaTopicsMap,
-		[]string{cfg.Kafka.Broker},
-		log)
-
-	service := svc.New(dao, log, kafkaProducer)
+	service := svc.New(dao, log)
 
 	// kafka
 	conn, err := connectConsumer([]string{cfg.Kafka.Broker})
@@ -75,7 +69,8 @@ func RunServer() error {
 
 	consumerConfig := NewKafkaConsumerConfig(conn, service, log)
 
-	go consumerConfig.ConsumeUsers([]string{cfg.Kafka.Broker}, kafkaTopicsMap[literals.NewUserTopic])
+	go consumerConfig.ConsumeNewComments([]string{cfg.Kafka.Broker}, kafkaTopicsMap[literals.NewCommentTopic])
+	go consumerConfig.ConsumeNewPost([]string{cfg.Kafka.Broker}, kafkaTopicsMap[literals.NewPostTopic])
 
 	// initialize routes
 	server.Router.InitializeRoutes(ctx, service, log, dbClient)
