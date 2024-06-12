@@ -28,6 +28,7 @@ type KafkaTopics struct {
 	NewUsersTopic               string `envconfig:"SERVICE_USER_KAFKA_NEW_USERS_TOPIC"`
 	NewPostNotificationTopic    string `envconfig:"SERVICE_USER_NEW_POST_NOTIFICATION_TOPIC"`
 	NewCommentNotificationTopic string `envconfig:"SERVICE_USER_NEW_COMMENT_NOTIFICATION_TOPIC"`
+	FollowUserNotificationTopic string `envconfig:"SERVICE_USER_FOLLOW_USER_NOTIFICATION_TOPIC"`
 }
 
 type KafkaConfig struct {

@@ -57,6 +57,7 @@ func RunServer() error {
 		literals.NewUserTopic:    cfg.Kafka.Topics.NewUsersTopic,
 		literals.NewPostTopic:    cfg.Kafka.Topics.NewPostNotificationTopic,
 		literals.NewCommentTopic: cfg.Kafka.Topics.NewCommentNotificationTopic,
+		literals.FollowUserTopic: cfg.Kafka.Topics.FollowUserNotificationTopic,
 	}
 
 	kafkaProducer, err := kafka.ConnectProducer(
