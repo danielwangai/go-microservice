@@ -5,7 +5,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func convertCommentSvcToModelType(c *CommentServiceType) *repo.CommentSchemaType {
+func convertCommentSvcToModelType(c *CommentServiceRequestType) *repo.CommentSchemaType {
 	// convert comment id string to object id
 	objectID, _ := primitive.ObjectIDFromHex(c.ID)
 	return &repo.CommentSchemaType{
@@ -29,7 +29,7 @@ func convertCommentResponseModelTypeToSvcType(c *repo.CommentSchemaType) *Commen
 	}
 }
 
-func convertUserSvcTypeToModelType(u *UserServiceType) *repo.UserSchemaType {
+func convertUserSvcTypeToModelType(u *UserRequestServiceType) *repo.UserSchemaType {
 	objectID, _ := primitive.ObjectIDFromHex(u.ID)
 	return &repo.UserSchemaType{
 		ID:        objectID,
@@ -54,7 +54,19 @@ func convertUserModelResponseTypeToSvcType(u *repo.UserSchemaType) *UserServiceR
 	}
 }
 
-func convertPostSvcModelTypeToModelType(p *PostServiceType) *repo.PostSchemaType {
+func convertPostSvcModelTypeToModelType(p *PostServiceRequestType) *repo.PostSchemaType {
+	objectID, _ := primitive.ObjectIDFromHex(p.ID)
+	return &repo.PostSchemaType{
+		ID:        objectID,
+		Title:     p.Title,
+		Content:   p.Content,
+		CreatedBy: convertUserSvcTypeToModelType(p.CreatedBy),
+		CreatedAt: p.CreatedAt,
+		UpdatedAt: p.UpdatedAt,
+	}
+}
+
+func convertPostRequestSvcTypeToModelType(p *PostServiceRequestType) *repo.PostSchemaType {
 	objectID, _ := primitive.ObjectIDFromHex(p.ID)
 	return &repo.PostSchemaType{
 		ID:        objectID,

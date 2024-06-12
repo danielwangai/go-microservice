@@ -2,12 +2,12 @@ package svc
 
 import "time"
 
-type CommentServiceType struct {
+type CommentServiceRequestType struct {
 	ID        string
 	Title     string
 	Comment   string
-	Post      *PostServiceType
-	CreatedBy *UserServiceType
+	Post      *PostServiceRequestType
+	CreatedBy *UserRequestServiceType
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
@@ -22,11 +22,11 @@ type CommentServiceResponseType struct {
 	UpdatedAt time.Time
 }
 
-type PostServiceType struct {
+type PostServiceRequestType struct {
 	ID        string
 	Title     string
 	Content   string
-	CreatedBy *UserServiceType
+	CreatedBy *UserRequestServiceType
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
@@ -40,7 +40,7 @@ type PostServiceResponseType struct {
 	UpdatedAt time.Time
 }
 
-type UserServiceType struct {
+type UserRequestServiceType struct {
 	ID        string
 	FirstName string
 	LastName  string

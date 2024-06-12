@@ -70,6 +70,7 @@ func RunServer() error {
 	consumerConfig := NewKafkaConsumerConfig(conn, service, log)
 
 	go consumerConfig.ConsumeNewComments([]string{cfg.Kafka.Broker}, kafkaTopicsMap[literals.NewCommentTopic])
+	go consumerConfig.ConsumeNewPost([]string{cfg.Kafka.Broker}, kafkaTopicsMap[literals.NewPostTopic])
 
 	// initialize routes
 	server.Router.InitializeRoutes(ctx, service, log, dbClient)
