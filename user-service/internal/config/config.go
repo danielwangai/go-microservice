@@ -24,11 +24,16 @@ type MongoConfig struct {
 	DbName string `envconfig:"SERVICE_USER_DATABASE_NAME"`
 }
 
+type KafkaTopics struct {
+	NewUsersTopic               string `envconfig:"SERVICE_USER_KAFKA_NEW_USERS_TOPIC"`
+	NewPostNotificationTopic    string `envconfig:"SERVICE_USER_NEW_POST_NOTIFICATION_TOPIC"`
+	NewCommentNotificationTopic string `envconfig:"SERVICE_USER_NEW_COMMENT_NOTIFICATION_TOPIC"`
+}
+
 type KafkaConfig struct {
-	BootstrapServers string `envconfig:"SERVICE_USER_KAFKA_BOOTSTRAP_SERVERS" split_words:"true"`
-	ClientID         string `envconfig:"SERVICE_USER_KAFKA_CLIENT_ID"`
-	AutoOffsetReset  string `envconfig:"SERVICE_USER_KAFKA_AUTO_OFFSET_RESET"`
-	Topic            string `envconfig:"SERVICE_USER_KAFKA_CREATE_USER_TOPIC"`
+	Topics  *KafkaTopics
+	GroupID string `envconfig:"SERVICE_USER_KAFKA_GROUP_ID"`
+	Broker  string `envconfig:"SERVICE_USER_KAFKA_BROKER"`
 }
 
 type AppConfig struct {
