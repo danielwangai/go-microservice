@@ -88,3 +88,37 @@ func convertPostResponseModelTypeToSvcType(p *repo.PostSchemaType) *PostServiceR
 		UpdatedAt: p.UpdatedAt,
 	}
 }
+
+func convertUserFollowModelToServiceResponseType(followObj *repo.UserFollowerSchemaType) *UserFollowerServiceResponseType {
+	return &UserFollowerServiceResponseType{
+		ID:        followObj.ID.Hex(),
+		Follower:  convertUserModelToUserServiceResponseType(followObj.Follower),
+		Followed:  convertUserModelToUserServiceResponseType(followObj.Followed),
+		CreatedAt: followObj.CreatedAt.String(),
+	}
+}
+
+func convertUserModelToUserServiceResponseType(u *repo.UserSchemaType) *UserServiceResponseType {
+	return &UserServiceResponseType{
+		ID:        u.ID.Hex(),
+		FirstName: u.FirstName,
+		LastName:  u.LastName,
+		Email:     u.Email,
+		Username:  u.Username,
+		Password:  u.Password,
+		CreatedAt: u.CreatedAt,
+		UpdatedAt: u.UpdatedAt,
+	}
+}
+
+func convertUserServiceRequestTypeToModelType(u *UserServiceRequestType) *repo.UserSchemaType {
+	objectID, _ := primitive.ObjectIDFromHex(u.ID)
+	return &repo.UserSchemaType{
+		ID:        objectID,
+		FirstName: u.FirstName,
+		LastName:  u.LastName,
+		Email:     u.Email,
+		Username:  u.Username,
+		Password:  u.Password,
+	}
+}
