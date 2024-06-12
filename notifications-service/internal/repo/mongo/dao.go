@@ -8,4 +8,7 @@ type DAO interface {
 	IsCommentUnique(ctx context.Context, commentId, postId, commenterId string) (bool, error)
 	CreatePost(ctx context.Context, p *PostSchemaType) (*PostSchemaType, error)
 	FindPostByTitleAndCreator(ctx context.Context, title, creatorId string) (*PostSchemaType, error)
+	FindUserByID(ctx context.Context, id string) (*UserSchemaType, error)
+	FollowUser(ctx context.Context, follower, followed *UserSchemaType) (*UserFollowerSchemaType, error)
+	AddUser(ctx context.Context, u *UserSchemaType) (*UserSchemaType, error)
 }

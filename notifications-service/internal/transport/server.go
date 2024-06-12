@@ -56,6 +56,7 @@ func RunServer() error {
 		literals.NewUserTopic:    cfg.Kafka.Topics.NewUsersTopic,
 		literals.NewPostTopic:    cfg.Kafka.Topics.NewPostNotificationTopic,
 		literals.NewCommentTopic: cfg.Kafka.Topics.NewCommentNotificationTopic,
+		literals.FollowUserTopic: cfg.Kafka.Topics.FollowUserNotificationTopic,
 	}
 
 	service := svc.New(dao, log)
@@ -69,8 +70,8 @@ func RunServer() error {
 
 	consumerConfig := NewKafkaConsumerConfig(conn, service, log)
 
-	go consumerConfig.ConsumeNewComments([]string{cfg.Kafka.Broker}, kafkaTopicsMap[literals.NewCommentTopic])
-	go consumerConfig.ConsumeNewPost([]string{cfg.Kafka.Broker}, kafkaTopicsMap[literals.NewPostTopic])
+	go consumerConfig.ConsumeUsers([]string{cfg.Kafka.Broker}, kafkaTopicsMap[literals.NewUserTopic])
+	go consumerConfig.ConsumeUserFollowInfo([]string{cfg.Kafka.Broker}, kafkaTopicsMap[literals.FollowUserTopic])
 
 	// initialize routes
 	server.Router.InitializeRoutes(ctx, service, log, dbClient)

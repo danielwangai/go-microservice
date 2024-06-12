@@ -33,3 +33,10 @@ type UserSchemaType struct {
 	CreatedAt time.Time          `bson:"createdAt"`
 	UpdatedAt time.Time          `bson:"updatedAt"`
 }
+
+type UserFollowerSchemaType struct {
+	ID        primitive.ObjectID `bson:"_id,omitempty"`
+	Follower  *UserSchemaType    `bson:"follower"`
+	Followed  *UserSchemaType    `bson:"followed"`
+	CreatedAt time.Time          `bson:"createdAt"`
+}

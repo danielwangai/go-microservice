@@ -66,3 +66,45 @@ func (s *SVC) CreatePost(ctx context.Context, p *PostServiceRequestType) (*PostS
 
 	return svcPost, nil
 }
+
+func (s *SVC) AddUser(ctx context.Context, u *UserServiceRequestType) (*UserServiceResponseType, error) {
+	// convert user service type to model layer type
+	uModel := convertUserServiceRequestTypeToModelType(u)
+
+	// save to db
+	res, err := s.dao.AddUser(ctx, uModel)
+	if err != nil {
+		return nil, err
+	}
+
+	// convert from user model type to user response type for service layer
+	uSvc := convertUserModelToUserServiceResponseType(res)
+
+	return uSvc, nil
+}
+
+// StoreFollowInfo stores reccord of a user following another
+// id1 is the user id of the follower
+// id2 is the user id of the user being followed
+func (s *SVC) StoreFollowInfo(ctx context.Context, id1, id2 string) (*UserFollowerServiceResponseType, error) {
+	follower, err := s.dao.FindUserByID(ctx, id1)
+	if err != nil {
+		s.log.WithError(err).Errorf("user id of the follower not found: %s", id1)
+		return nil, err
+	}
+
+	// check if user to be followed exists
+	followed, err := s.dao.FindUserByID(ctx, id2)
+	if err != nil {
+		s.log.WithError(err).Errorf("user id of the user to be followed not found: %s", id2)
+		return nil, err
+	}
+
+	// follow user
+	followObj, err := s.dao.FollowUser(ctx, follower, followed)
+	if err != nil {
+		return nil, err
+	}
+
+	return convertUserFollowModelToServiceResponseType(followObj), nil
+}

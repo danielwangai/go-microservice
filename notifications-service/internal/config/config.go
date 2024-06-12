@@ -11,30 +11,31 @@ import (
 )
 
 const (
-	envPrefix = "POST_SERVICE"
+	envPrefix = "NOTIFICATION_SERVICE"
 )
 
 // WebServerConfig ...
 type WebServerConfig struct {
-	Port string `envconfig:"POST_SERVICE_SERVER_PORT" split_words:"true"`
+	Port string `envconfig:"NOTIFICATION_SERVICE_SERVER_PORT" split_words:"true"`
 }
 
 type MongoConfig struct {
-	DbURL  string `envconfig:"POST_SERVICE_DATABASE_URL"`
-	DbName string `envconfig:"POST_SERVICE_DATABASE_NAME"`
+	DbURL  string `envconfig:"NOTIFICATION_SERVICE_DATABASE_URL"`
+	DbName string `envconfig:"NOTIFICATION_SERVICE_DATABASE_NAME"`
 }
 
 type KafkaTopics struct {
-	NewUsersTopic               string `envconfig:"POST_SERVICE_KAFKA_NEW_USERS_TOPIC"`
-	NewPostNotificationTopic    string `envconfig:"POST_SERVICE_NEW_POST_NOTIFICATION_TOPIC"`
-	NewCommentNotificationTopic string `envconfig:"POST_SERVICE_NEW_COMMENT_NOTIFICATION_TOPIC"`
+	NewUsersTopic               string `envconfig:"NOTIFICATION_SERVICE_KAFKA_NEW_USERS_TOPIC"`
+	NewPostNotificationTopic    string `envconfig:"NOTIFICATION_SERVICE_NEW_POST_NOTIFICATION_TOPIC"`
+	NewCommentNotificationTopic string `envconfig:"NOTIFICATION_SERVICE_NEW_COMMENT_NOTIFICATION_TOPIC"`
+	FollowUserNotificationTopic string `envconfig:"NOTIFICATION_SERVICE_FOLLOW_USER_NOTIFICATION_TOPIC"`
 }
 
 type KafkaConfig struct {
 	Topics  *KafkaTopics
-	GroupID string `envconfig:"POST_SERVICE_KAFKA_GROUP_ID"`
-	Network string `envconfig:"POST_SERVICE_KAFKA_NETWORK"`
-	Broker  string `envconfig:"POST_SERVICE_KAFKA_BROKER"`
+	GroupID string `envconfig:"NOTIFICATION_SERVICE_KAFKA_GROUP_ID"`
+	Network string `envconfig:"NOTIFICATION_SERVICE_KAFKA_NETWORK"`
+	Broker  string `envconfig:"NOTIFICATION_SERVICE_KAFKA_BROKER"`
 }
 
 type AppConfig struct {

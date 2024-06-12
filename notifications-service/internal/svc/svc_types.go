@@ -61,3 +61,19 @@ type UserServiceResponseType struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
+
+type UserServiceRequestType struct {
+	ID        string
+	FirstName string
+	LastName  string
+	Email     string
+	Username  string
+	Password  string
+}
+
+type UserFollowerServiceResponseType struct {
+	ID        string
+	Follower  *UserServiceResponseType
+	Followed  *UserServiceResponseType
+	CreatedAt string
+}
