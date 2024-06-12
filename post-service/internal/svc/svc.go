@@ -2,21 +2,23 @@ package svc
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
+	k "github.com/danielwangai/twiga-foods/post-service/internal/kafka"
 	"github.com/danielwangai/twiga-foods/post-service/internal/literals"
 	"github.com/danielwangai/twiga-foods/post-service/internal/repo/mongo"
 	"github.com/sirupsen/logrus"
 )
 
 type SVC struct {
-	dao repo.DAO
-	log *logrus.Logger
-	//kafka *transport.ReaderConfig
+	dao   repo.DAO
+	log   *logrus.Logger
+	kafka *k.KafkaProducer
 }
 
 // New returns a new Svc object
-func New(dao repo.DAO, log *logrus.Logger) Svc {
-	return &SVC{dao, log}
+func New(dao repo.DAO, log *logrus.Logger, kafkaProducer *k.KafkaProducer) Svc {
+	return &SVC{dao, log, kafkaProducer}
 }
 
 func (s *SVC) CreatePost(ctx context.Context, p *PostServiceRequestType) (*PostServiceResponseType, literals.Error) {
@@ -51,7 +53,21 @@ func (s *SVC) CreatePost(ctx context.Context, p *PostServiceRequestType) (*PostS
 		return nil, errs
 	}
 
-	return convertPostResponseModelTypeToSvcType(post), nil
+	svcPost := convertPostResponseModelTypeToSvcType(post)
+
+	// write to kafka that a new post has been created for notification purposes
+	// convert post to bytes
+	pBytes, err := json.Marshal(svcPost)
+	if err != nil {
+		return nil, map[string]string{"error": err.Error()}
+	}
+	err = s.kafka.PushPostNotificationToQueue(svcPost.ID, pBytes)
+	if err != nil {
+		s.log.WithError(err).Errorf("failed to push post notification to queue")
+		return nil, map[string]string{"error": err.Error()}
+	}
+
+	return svcPost, nil
 }
 
 func (s *SVC) GetPosts(ctx context.Context) ([]*PostServiceResponseType, error) {
