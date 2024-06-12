@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/danielwangai/twiga-foods/post-service/internal/kafka"
+	"github.com/danielwangai/twiga-foods/post-service/internal/literals"
 	"github.com/danielwangai/twiga-foods/post-service/internal/svc"
 	"net/http"
 
@@ -52,8 +53,14 @@ func RunServer() error {
 	dao := mgo.New(db, log)
 
 	// kafka producer
+	kafkaTopicsMap := map[string]string{
+		literals.NewUserTopic:    cfg.Kafka.Topics.NewUsersTopic,
+		literals.NewPostTopic:    cfg.Kafka.Topics.NewPostNotificationTopic,
+		literals.NewCommentTopic: cfg.Kafka.Topics.NewCommentNotificationTopic,
+	}
+
 	kafkaProducer, err := kafka.ConnectProducer(
-		cfg.Kafka.NewPostNotificationTopic,
+		kafkaTopicsMap,
 		[]string{cfg.Kafka.Broker},
 		log)
 
@@ -68,7 +75,7 @@ func RunServer() error {
 
 	consumerConfig := NewKafkaConsumerConfig(conn, service, log)
 
-	go consumerConfig.ConsumeUsers([]string{cfg.Kafka.Broker}, cfg.Kafka.NewUsersTopic)
+	go consumerConfig.ConsumeUsers([]string{cfg.Kafka.Broker}, kafkaTopicsMap[literals.NewUserTopic])
 
 	// initialize routes
 	server.Router.InitializeRoutes(ctx, service, log, dbClient)

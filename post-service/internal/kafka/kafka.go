@@ -10,10 +10,10 @@ type KafkaProducer struct {
 	producer sarama.SyncProducer
 	log      *logrus.Logger
 	brokers  []string
-	topic    string
+	topics   map[string]string
 }
 
-func ConnectProducer(topic string, brokers []string, log *logrus.Logger) (*KafkaProducer, error) {
+func ConnectProducer(topics map[string]string, brokers []string, log *logrus.Logger) (*KafkaProducer, error) {
 	config := sarama.NewConfig()
 	config.Producer.Return.Successes = true
 	config.Producer.RequiredAcks = sarama.WaitForAll
@@ -24,14 +24,14 @@ func ConnectProducer(topic string, brokers []string, log *logrus.Logger) (*Kafka
 		return nil, err
 	}
 
-	return &KafkaProducer{conn, log, brokers, topic}, nil
+	return &KafkaProducer{conn, log, brokers, topics}, nil
 }
 
-func (k *KafkaProducer) PushPostNotificationToQueue(key string, message []byte) error {
+func (k *KafkaProducer) PushMessageToQueue(topic, key string, message []byte) error {
 	defer k.producer.Close()
 
 	msg := &sarama.ProducerMessage{
-		Topic: k.topic,
+		Topic: k.topics[topic],
 		Key:   sarama.StringEncoder(key),
 		Value: sarama.StringEncoder(message),
 	}
@@ -41,7 +41,7 @@ func (k *KafkaProducer) PushPostNotificationToQueue(key string, message []byte) 
 		return err
 	}
 
-	fmt.Printf("Message is stored in topic(%s)/partition(%d)/offset(%d)\n", k.topic, partition, offset)
+	fmt.Printf("Message is stored in topic(%s)/partition(%d)/offset(%d)\n", msg.Topic, partition, offset)
 
 	return nil
 }

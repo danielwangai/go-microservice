@@ -24,12 +24,17 @@ type MongoConfig struct {
 	DbName string `envconfig:"POST_SERVICE_DATABASE_NAME"`
 }
 
+type KafkaTopics struct {
+	NewUsersTopic               string `envconfig:"POST_SERVICE_KAFKA_NEW_USERS_TOPIC"`
+	NewPostNotificationTopic    string `envconfig:"POST_SERVICE_NEW_POST_NOTIFICATION_TOPIC"`
+	NewCommentNotificationTopic string `envconfig:"POST_SERVICE_NEW_COMMENT_NOTIFICATION_TOPIC"`
+}
+
 type KafkaConfig struct {
-	NewUsersTopic            string `envconfig:"POST_SERVICE_KAFKA_NEW_USERS_TOPIC"`
-	NewPostNotificationTopic string `envconfig:"POST_SERVICE_NEW_POST_NOTIFICATION_TOPIC"`
-	GroupID                  string `envconfig:"POST_SERVICE_KAFKA_GROUP_ID"`
-	Network                  string `envconfig:"POST_SERVICE_KAFKA_NETWORK"`
-	Broker                   string `envconfig:"POST_SERVICE_KAFKA_BROKER"`
+	Topics  *KafkaTopics
+	GroupID string `envconfig:"POST_SERVICE_KAFKA_GROUP_ID"`
+	Network string `envconfig:"POST_SERVICE_KAFKA_NETWORK"`
+	Broker  string `envconfig:"POST_SERVICE_KAFKA_BROKER"`
 }
 
 type AppConfig struct {
