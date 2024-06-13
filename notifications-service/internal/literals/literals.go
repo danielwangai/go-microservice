@@ -18,4 +18,6 @@ const (
 	NewPostTopic    = "new-post-notification-events"
 	NewCommentTopic = "new-comment-notification-events"
 	FollowUserTopic = "follow-user-notification-events"
+
+	MailPort = 578
 )

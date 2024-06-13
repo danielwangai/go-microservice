@@ -11,4 +11,5 @@ type DAO interface {
 	FindUserByID(ctx context.Context, id string) (*UserSchemaType, error)
 	FollowUser(ctx context.Context, follower, followed *UserSchemaType) (*UserFollowerSchemaType, error)
 	AddUser(ctx context.Context, u *UserSchemaType) (*UserSchemaType, error)
+	GetFollowsByUserID(ctx context.Context, id string) ([]*UserFollowerSchemaType, error)
 }

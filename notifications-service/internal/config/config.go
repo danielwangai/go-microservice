@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"net/smtp"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -38,10 +39,20 @@ type KafkaConfig struct {
 	Broker  string `envconfig:"NOTIFICATION_SERVICE_KAFKA_BROKER"`
 }
 
+type MailConfig struct {
+	MailServerAddress string `envconfig:"NOTIFICATION_SERVICE_MAIL_SERVER_ADDRESS"`
+	Auth              smtp.Auth
+	FromEmail         string `envconfig:"NOTIFICATION_SERVICE_MAIL_FROM_EMAIL"`
+	Username          string `envconfig:"NOTIFICATION_SERVICE_MAIL_USERNAME"`
+	Password          string `envconfig:"NOTIFICATION_SERVICE_MAIL_PASSWORD"`
+	Host              string `envconfig:"NOTIFICATION_SERVICE_MAIL_HOST"`
+}
+
 type AppConfig struct {
 	WebServer *WebServerConfig
 	DB        *MongoConfig
 	Kafka     *KafkaConfig
+	Mail      *MailConfig
 }
 
 // FromEnv loads the app config from environment variables
