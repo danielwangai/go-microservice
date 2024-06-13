@@ -3,19 +3,23 @@ package svc
 import (
 	"context"
 	"errors"
+	"fmt"
 	"github.com/danielwangai/twiga-foods/notifications-service/internal/literals"
+	"github.com/danielwangai/twiga-foods/notifications-service/internal/mailer"
 	"github.com/danielwangai/twiga-foods/notifications-service/internal/repo/mongo"
 	"github.com/sirupsen/logrus"
+	"os"
 )
 
 type SVC struct {
-	dao repo.DAO
-	log *logrus.Logger
+	dao    repo.DAO
+	log    *logrus.Logger
+	mailer *mailer.MailConfig
 }
 
 // New returns a new Svc object
-func New(dao repo.DAO, log *logrus.Logger) Svc {
-	return &SVC{dao: dao, log: log}
+func New(dao repo.DAO, log *logrus.Logger, mailer *mailer.MailConfig) Svc {
+	return &SVC{dao: dao, log: log, mailer: mailer}
 }
 
 func (s *SVC) AddComment(ctx context.Context, c *CommentServiceRequestType) (*CommentServiceResponseType, error) {
@@ -64,6 +68,22 @@ func (s *SVC) CreatePost(ctx context.Context, p *PostServiceRequestType) (*PostS
 
 	svcPost := convertPostResponseModelTypeToSvcType(post)
 
+	// get post author's followers
+	follows, err := s.dao.GetFollowsByUserID(ctx, svcPost.CreatedBy.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	var followers []*UserServiceResponseType
+	for _, follow := range follows {
+		followers = append(followers, convertUserModelResponseTypeToSvcType(follow.Follower))
+	}
+
+	followerEmails := getFollowerEmails(followers)
+	s.log.Infof("\n\nfollowers: %v", followerEmails)
+	// send email to the followers of the creator
+	go s.mailer.SendMail(followerEmails, fmt.Sprintf("Link to post: %s/%s", os.Getenv("NOTIFICATION_SERVICE_POSTS_URL"), svcPost.ID))
+
 	return svcPost, nil
 }
 
@@ -83,7 +103,7 @@ func (s *SVC) AddUser(ctx context.Context, u *UserServiceRequestType) (*UserServ
 	return uSvc, nil
 }
 
-// StoreFollowInfo stores reccord of a user following another
+// StoreFollowInfo stores record of a user following another
 // id1 is the user id of the follower
 // id2 is the user id of the user being followed
 func (s *SVC) StoreFollowInfo(ctx context.Context, id1, id2 string) (*UserFollowerServiceResponseType, error) {
@@ -107,4 +127,13 @@ func (s *SVC) StoreFollowInfo(ctx context.Context, id1, id2 string) (*UserFollow
 	}
 
 	return convertUserFollowModelToServiceResponseType(followObj), nil
+}
+
+func getFollowerEmails(followers []*UserServiceResponseType) []string {
+	emails := make([]string, len(followers))
+	for i, follow := range followers {
+		emails[i] = follow.Email
+	}
+
+	return emails
 }

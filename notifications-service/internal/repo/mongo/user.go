@@ -107,3 +107,21 @@ func (dao *dbClient) AddUser(ctx context.Context, u *UserSchemaType) (*UserSchem
 	dao.log.Infof("a new user with ID: %s was inserted successfully. Data: %v", res.InsertedID, u)
 	return u, nil
 }
+
+func (dao *dbClient) GetFollowsByUserID(ctx context.Context, id string) ([]*UserFollowerSchemaType, error) {
+	coll := GetCollection(dao.db, literals.UserFollowCollection)
+	filter := bson.D{{"followed._id", bson.D{{"$eq", id}}}}
+
+	cursor, err := coll.Find(ctx, filter)
+	if err != nil && err != mongo.ErrNoDocuments {
+		return nil, err
+	}
+	var results []*UserFollowerSchemaType
+	if err = cursor.All(context.TODO(), &results); err != nil {
+		return nil, err
+	}
+
+	dao.log.Infof("results: %+v", len(results))
+
+	return results, nil
+}
